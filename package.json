@@ -1,0 +1,27 @@
+{
+  "name": "myauth",
+  "version": "1.0.0",
+  "description": "an authentication project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
+  },
+  "keywords": [
+    "auth",
+    "oauth"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mongoose": "^9.3.3",
+    "nodemon": "^3.1.14"
+  },
+  "devDependencies": {
+    "prettier": "3.8.1"
+  }
+}
