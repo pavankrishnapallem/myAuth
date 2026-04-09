@@ -151,11 +151,11 @@ export const logout = async (req, res) => {
   res.json({ message: "Logged out" });
 };
 
-export const googleCallback = async (req, res, next) => {
+export const googleLogin = async (req, res, next) => {
   try {
     const { code } = req.query;
 
-    const googleUser = await oauthService.getGoogleUser(code);
+    const googleUser = await oauthService.getLoginGoogleUser(code);
 
     const { sub, email, name } = googleUser;
 
@@ -215,6 +215,47 @@ export const googleCallback = async (req, res, next) => {
     next(err);
   }
 };
+
+export const googleSignUp = async (req, res, next) => {
+  try {
+    const { code } = req.query;
+
+    const googleUser = await oauthService.getSignUpGoogleUser(code);
+
+    const { sub, email, name } = googleUser;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      throw new Error("User already exists");
+    }
+
+    const user = await 
+    User.create({
+      email,
+      providers: ["google"],
+      profile: { name },
+    });
+
+    await Account.create({
+      userId: user._id,
+      provider: "google",
+      providerId: sub,
+      email,
+    });
+
+    res.status(201).json({
+      message: "User created successfully via google",
+      user: {
+        _id: user._id,
+        email: user.email,
+      },
+    });
+
+  } catch(err){
+    next(err);
+  }
+}
 
 export const googleRedirect = (req, res) => {
   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_REDIRECT_URI}&response_type=code&scope=openid%20email%20profile`;

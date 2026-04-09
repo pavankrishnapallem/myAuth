@@ -15,14 +15,33 @@ export const verifyGoogleIdToken = async (idToken) => {
   return payload;
 };
 
-export const getGoogleUser = async (code) => {
+export const getSignUpGoogleUser = async (code) => {
   const tokenRes = await axios.post(
     "https://oauth2.googleapis.com/token",
     {
       code,
       client_id: process.env.GOOGLE_CLIENT_ID,
       client_secret: process.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+      redirect_uri: process.env.GOOGLE_SIGNUP_REDIRECT_URI,
+      grant_type: "authorization_code",
+    }
+  );
+
+  const { id_token } = tokenRes.data;
+
+  const payload = await verifyGoogleIdToken(id_token);
+
+  return payload;
+};
+
+export const getLoginGoogleUser = async (code) => {
+  const tokenRes = await axios.post(
+    "https://oauth2.googleapis.com/token",
+    {
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: process.env.GOOGLE_LOGIN_REDIRECT_URI,
       grant_type: "authorization_code",
     }
   );
