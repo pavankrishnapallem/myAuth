@@ -1,5 +1,6 @@
 // services/auth.service.js
 
+import { Account } from "../models/account-model.js";
 import { User } from "../models/user-model.js";
 
 export const signup = async (email, password) => {
@@ -21,7 +22,12 @@ export const signup = async (email, password) => {
 };
 
 export const login = async (email, password) => {
-  const user = await User.findOne({ email }).select("+password")
+  
+  const account = await Account.findOne({
+    provider: "gmail",
+    providerId: email
+  })
+  const user = await User.findOne({_id: account.userId}).select("+password")
 
   if (!user) {
     throw new Error("User not found");

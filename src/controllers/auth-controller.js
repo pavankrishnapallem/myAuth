@@ -19,6 +19,13 @@ export const signup = async (req, res, next) => {
 
     const user = await authService.signup(email, password);
 
+    await Account.create({
+      userId: user._id,
+      provider: "gmail",
+      providerId: email,
+      email: email,
+    })
+
     res.status(201).json({
       message: "User created successfully",
       user: {
@@ -166,12 +173,11 @@ export const googleCallback = async (req, res, next) => {
       // check if user exists by email
       user = await User.findOne({ email });
 
-      if (!user) {
-        user = await User.create({
-          email,
-          providers: ["google"],
-          profile: { name },
-        });
+        if (!user) {
+          return res.status(404).json({
+             message: "User not found. Please register first.",
+          });
+        }
       }
 
       // link account
@@ -181,7 +187,6 @@ export const googleCallback = async (req, res, next) => {
         providerId: sub,
         email,
       });
-    }
 
     // create session (same as login)
     const accessToken = tokenService.generateAccessToken({
