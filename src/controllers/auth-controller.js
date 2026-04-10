@@ -178,7 +178,7 @@ export const googleLogin = async (req, res, next) => {
              message: "User not found. Please register first.",
           });
         }
-      }
+      
 
       // link account
       await Account.create({
@@ -187,6 +187,7 @@ export const googleLogin = async (req, res, next) => {
         providerId: sub,
         email,
       });
+    }
 
     // create session (same as login)
     const accessToken = tokenService.generateAccessToken({
